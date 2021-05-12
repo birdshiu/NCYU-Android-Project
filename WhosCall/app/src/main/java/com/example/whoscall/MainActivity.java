@@ -2,6 +2,7 @@ package com.example.whoscall;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,7 +17,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        txt=findViewById(R.id.txt);
+        Intent tmpIntent=new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(tmpIntent);
 
         Uri allCalls = Uri.parse("content://call_log/calls");
         //Cursor c = managedQuery(CallLog.Calls.CONTENT_URI, null, null, null, null);

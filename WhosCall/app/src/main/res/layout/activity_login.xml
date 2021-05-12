@@ -22,7 +22,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="30dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -77,7 +77,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="76dp"
         android:layout_marginEnd="24dp"
         android:text="登入"
         android:textSize="32dp"
@@ -87,28 +87,31 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <TextView
+        android:id="@+id/noUseTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="或是"
-        android:textColor="#FF0000"
+        android:textColor="#D0D0D0"
         android:textSize="32dp"
         app:layout_constraintBottom_toTopOf="@+id/loginBtnRegister"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginBtnLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/loginBtnLogin"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/loginBtnRegister"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="92dp"
+        android:layout_marginTop="64dp"
         android:layout_marginEnd="24dp"
         android:text="註冊帳號"
         android:textSize="32dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loginBtnLogin" />
 
