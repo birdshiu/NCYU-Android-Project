@@ -1,15 +1,24 @@
 package com.example.whoscall;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CallLog;
+import android.util.Log;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    private final int REQUEST_CODE_READ_CALL_LOG=1;
+    private final int REQUEST_CODE_INTERNET=2;
     private TextView txt;
 
     @Override
@@ -17,20 +26,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent tmpIntent=new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(tmpIntent);
+        askForAllPermission();
+    }
 
-        Uri allCalls = Uri.parse("content://call_log/calls");
-        //Cursor c = managedQuery(CallLog.Calls.CONTENT_URI, null, null, null, null);
+    private void askForAllPermission(){
+        //程式請求所有權限，使用者都同意後才能繼續使用本程式
+        if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.READ_CALL_LOG}, REQUEST_CODE_READ_CALL_LOG);
+        }
+    }
 
-        /*String result="";
+    @Override
+    protected void onResume(){
+        //test
+        super.onResume();
 
-        String num= c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));// for  number
-        String name= c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME));// for name
-        String duration = c.getString(c.getColumnIndex(CallLog.Calls.DURATION));// for duration
-        int type = Integer.parseInt(c.getString(c.getColumnIndex(CallLog.Calls.TYPE)));// for call type, Incoming or out going.
+        //SharedPreferences shareP=getSharedPreferences("account_result", MODE_PRIVATE);
+        //Log.d("message", shareP.getString("account", "nope"));
+    }
 
-        result+=num+", "+name+", "+duration+", "+type;
-        txt.setText(result);*/
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        Log.d("message", String.valueOf(grantResults[0]));
     }
 }
