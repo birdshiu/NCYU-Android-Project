@@ -16,6 +16,8 @@ import android.provider.CallLog;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.net.HttpURLConnection;
+
 public class MainActivity extends AppCompatActivity {
     private final int REQUEST_CODE_READ_CALL_LOG=1;
     private final int REQUEST_CODE_INTERNET=2;
@@ -25,8 +27,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         askForAllPermission();
+
+        Intent tmpIntent=new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(tmpIntent);
     }
 
     private void askForAllPermission(){

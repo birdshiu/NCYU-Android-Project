@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WhosCall</string>
+    <string name="server_ip">192.168.43.79</string>
 </resources>

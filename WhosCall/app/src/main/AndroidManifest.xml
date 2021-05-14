@@ -13,7 +13,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.WhosCall">
+        android:theme="@style/Theme.WhosCall"
+        android:networkSecurityConfig="@xml/network_security_config">
+        <!--為了讓 app 可以用 http 傳傳:https://blog.csdn.net/cpcpcp123/article/details/108063189-->
         <activity android:name=".LoginActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+android已明禁單純使用 http,所以要用 network-setcurity-config
+設定  cleartextTrafficPermitted="true" 後才能使用 http。
+參考資料:
+https://blog.csdn.net/cpcpcp123/article/details/108063189
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true"/>
+</network-security-config>
