@@ -1,21 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".RegisterActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent">
         <TextView
-            android:id="@+id/loginTextView"
+            android:id="@+id/registerTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
-            android:text="登入頁面"
+            android:text="註冊頁面"
             android:textSize="48dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
@@ -31,7 +30,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loginTextView">
+            app:layout_constraintTop_toBottomOf="@+id/registerTextView">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -46,7 +45,7 @@
                     android:textSize="24sp" />
 
                 <EditText
-                    android:id="@+id/loginEdtAccount"
+                    android:id="@+id/registerEdtAccount"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:inputType="text"
@@ -68,7 +67,7 @@
                     android:textSize="24sp" />
 
                 <EditText
-                    android:id="@+id/loginEdtPassword"
+                    android:id="@+id/registerEdtPassword"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
@@ -78,47 +77,19 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/loginBtnLogin"
+            android:id="@+id/registerBtnRegister"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="70dp"
             android:layout_marginEnd="24dp"
-            android:text="登入"
+            android:text="註冊"
             android:textSize="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-        <TextView
-            android:id="@+id/noUseTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="或是"
-            android:textColor="#D0D0D0"
-            android:textSize="32dp"
-            app:layout_constraintBottom_toTopOf="@+id/loginBtnRegister"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loginBtnLogin"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <Button
-            android:id="@+id/loginBtnRegister"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="64dp"
-            android:layout_marginEnd="24dp"
-            android:text="註冊帳號"
-            android:textSize="32dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loginBtnLogin" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

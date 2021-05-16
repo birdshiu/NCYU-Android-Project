@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             mainTxtMessage.setText(READY_START_MESSAGE);
             mainTxtMessage.setTextSize(32);
             mainImage.setImageResource(R.drawable.ready_start);
-            mainHandler.postDelayed(enterLoginActivityRunnable, 2500); //2.5秒後啟動 loginActivity
+            mainHandler.postDelayed(enterLoginActivityRunnable, 1500); //1.5秒後啟動 loginActivity
         }else{
             /**
              * 把 View 給藏起來。

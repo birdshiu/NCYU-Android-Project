@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.whoscall">
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /><!--查看網路狀態的權限-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/> <!--檢查電話狀態-->
-    <uses-permission android:name="android.permission.READ_CALL_LOG" /> <!-- 通話記錄 -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- 使用網路的權限 -->
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 查看網路狀態的權限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 檢查電話狀態 -->
+    <uses-permission android:name="android.permission.READ_CALL_LOG" /> <!-- 通話記錄 -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.WhosCall"
-        android:networkSecurityConfig="@xml/network_security_config">
-        <!--為了讓 app 可以用 http 傳傳:https://blog.csdn.net/cpcpcp123/article/details/108063189-->
-        <activity android:name=".LoginActivity"></activity>
+        android:theme="@style/Theme.WhosCall">
+        <activity android:name=".RegisterActivity"></activity>
+        <!-- 為了讓 app 可以用 http 傳傳:https://blog.csdn.net/cpcpcp123/article/details/108063189 -->
+        <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
