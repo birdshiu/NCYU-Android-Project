@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,9 +28,15 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
+    private final String LOGIN_STATUS_OK="0";
+
     private EditText loginEdtAccount, loginEdtPassword;
     private Button loginBtnLogin;
     private Thread tmpT;
+
+    private Handler loginHandler;
+    private String loginResult;
+    private String userAccount, userPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +50,20 @@ public class LoginActivity extends AppCompatActivity {
         loginBtnLogin.setEnabled(false);
         loginBtnLogin.setOnClickListener(loginBtnLoginOnClickListener);
         loginEdtAccount.addTextChangedListener(checkAccountTextChangeListener);
+        loginEdtPassword.addTextChangedListener(checkPasswordTextChangeListener);
+
+        loginHandler=new Handler();
     }
 
     private View.OnClickListener loginBtnLoginOnClickListener=new View.OnClickListener(){
         @Override
         public void onClick(View view){
+            loginBtnLogin.setEnabled(false); //防止使用者一點再點
+            userAccount=loginEdtAccount.getText().toString();
+            userPassword=loginEdtPassword.getText().toString();
+
+            Log.d("message", userAccount);
+            Log.d("message", userPassword);
             //點擊後就弄個 Thread 來跑網路的傳輸工作
             /**
              * HttpUrlConnection的範例:
@@ -65,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                         url=new URL("http://"+getString(R.string.server_ip)+"/test.php"); //請求的目標
                         connection=(HttpURLConnection)url.openConnection();
 
-                        String parameters="user=pony&password=1234"; //post的值，用&做連接
+                        String parameters="user="+userAccount+"&password="+userPassword; //post的值，用&做連接
                         byte[] postData=parameters.getBytes(Charset.forName("UTF-8")); //轉成 byte 序列，utf-8 編碼
                         int postDataLength=postData.length; //post需要知道資料的長度
 
@@ -84,18 +100,19 @@ public class LoginActivity extends AppCompatActivity {
                         dataOStream=new DataOutputStream(connection.getOutputStream());
                         dataOStream.write(postData);
                         dataOStream.flush();
+
                         /**
                          * 如果最後沒有呼叫到 connection.getInputStream()，Server那邊好像不會接收到資料。(不知為啥)
-                         * 之後如困要讀Server端送過來的資料，可用以下方法
+                         * 之後如果要讀Server端送過來的資料，可用以下方法
                          *  參考資料:https://stackoverflow.com/questions/50506450/how-to-read-whole-data-from-datainputstream-by-a-loop
                          */
-                        //DataInputStream dataIStream=new DataInputStream(connection.getInputStream());
-                        //StringBuffer inputLine=new StringBuffer();
-                        //String tmp;
-                        //while((tmp=dataIStream.readLine()) != null){
-                        //    inputLine.append(tmp);
-                        //    Log.d("message", inputLine.toString());
-                         //}
+                        DataInputStream dataIStream=new DataInputStream(connection.getInputStream());
+                        StringBuffer inputLine=new StringBuffer();
+                        String tmpString;
+                        while((tmpString=dataIStream.readLine()) != null){
+                            inputLine.append(tmpString);
+                            Log.d("message", inputLine.toString());
+                         }
 
 
                     }catch(Exception e){
@@ -116,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             /**
-             * 只要 EditText 的內容有變，個方法就會觸發
+             * 只要 EditText 的內容有變，這個方法就會觸發
              * 參考資料:https://stackoverflow.com/questions/11309710/how-to-apply-the-textchange-event-on-edittext
              **/
             String sValue=s.toString();//那個 sValue 是 EditText 的內容
@@ -125,6 +142,7 @@ public class LoginActivity extends AppCompatActivity {
                     loginEdtAccount.getText().delete(s.length()-1, s.length());//去除最後一個字(就是使用者輸入的那個不合法字)
                 }
             }
+            checkLoginBtnLoginEnable();
         }
 
         @Override
@@ -132,6 +150,31 @@ public class LoginActivity extends AppCompatActivity {
 
         }
     };
+
+    private TextWatcher checkPasswordTextChangeListener=new TextWatcher(){
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String sValue=s.toString();//那個 sValue 是 EditText 的內容
+            if(!sValue.matches("[a-zA-Z1-9]+")){ //輸入限定只能是 A~Z 或 a~z 跟 1~9
+                if(sValue.length() != 0){ //要先確定是否有字串
+                    loginEdtPassword.getText().delete(s.length()-1, s.length());//去除最後一個字(就是使用者輸入的那個不合法字)
+                }
+            }
+            checkLoginBtnLoginEnable();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
     @Override
     public void onBackPressed() {
         /**
@@ -139,6 +182,16 @@ public class LoginActivity extends AppCompatActivity {
          *參考的資料
          * https://stackoverflow.com/questions/4779954/disable-back-button-in-android
          */
+    }
 
+    private void checkLoginBtnLoginEnable(){ //查看兩個輸入框是否有東西
+        int editPasswordLength=loginEdtPassword.getText().toString().length();
+        int editAccountLength=loginEdtAccount.getText().toString().length();
+
+        if(editAccountLength != 0 && editPasswordLength != 0){ //兩個都有的話，就能按下登入鈕
+            loginBtnLogin.setEnabled(true);
+        }else{
+            loginBtnLogin.setEnabled(false);
+        }
     }
 }
