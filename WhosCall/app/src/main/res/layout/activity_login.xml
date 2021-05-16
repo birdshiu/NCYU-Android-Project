@@ -43,13 +43,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="帳號:"
-                    android:textSize="32sp" />
+                    android:textSize="24sp" />
 
                 <EditText
                     android:id="@+id/loginEdtAccount"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:textSize="32sp"
+                    android:inputType="text"
+                    android:textSize="24sp"
                     android:maxLength="10" />
             </LinearLayout>
 
@@ -64,13 +65,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="密碼:"
-                    android:textSize="32sp" />
+                    android:textSize="24sp" />
 
                 <EditText
                     android:id="@+id/loginEdtPassword"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:textSize="32sp"
+                    android:textSize="24sp"
                     android:maxLength="10"
                     android:inputType="textPassword"/>
             </LinearLayout>
@@ -81,12 +82,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="76dp"
+            android:layout_marginTop="36dp"
             android:layout_marginEnd="24dp"
             android:text="登入"
             android:textSize="32dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 

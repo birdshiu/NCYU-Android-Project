@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,7 +40,9 @@ public class LoginActivity extends AppCompatActivity {
         loginEdtPassword=findViewById(R.id.loginEdtPassword);
         loginBtnLogin=findViewById(R.id.loginBtnLogin);
 
+        loginBtnLogin.setEnabled(false);
         loginBtnLogin.setOnClickListener(loginBtnLoginOnClickListener);
+        loginEdtAccount.addTextChangedListener(checkAccountTextChangeListener);
     }
 
     private View.OnClickListener loginBtnLoginOnClickListener=new View.OnClickListener(){
@@ -102,6 +106,32 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
+    private TextWatcher checkAccountTextChangeListener=new TextWatcher(){
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            /**
+             * 只要 EditText 的內容有變，個方法就會觸發
+             * 參考資料:https://stackoverflow.com/questions/11309710/how-to-apply-the-textchange-event-on-edittext
+             **/
+            String sValue=s.toString();//那個 sValue 是 EditText 的內容
+            if(!sValue.matches("[a-zA-Z1-9]+")){ //輸入限定只能是 A~Z 或 a~z 跟 1~9
+                if(sValue.length() != 0){ //要先確定是否有字串
+                    loginEdtAccount.getText().delete(s.length()-1, s.length());//去除最後一個字(就是使用者輸入的那個不合法字)
+                }
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
     @Override
     public void onBackPressed() {
         /**
