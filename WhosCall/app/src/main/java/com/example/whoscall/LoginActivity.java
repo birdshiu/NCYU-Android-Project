@@ -146,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
              * 參考資料:https://stackoverflow.com/questions/11309710/how-to-apply-the-textchange-event-on-edittext
              **/
             String sValue=s.toString();//那個 sValue 是 EditText 的內容
-            if(!sValue.matches("[a-zA-Z1-9]+")){ //輸入限定只能是 A~Z 或 a~z 跟 1~9
+            if(!sValue.matches("[a-zA-Z0-9]+")){ //輸入限定只能是 A~Z 或 a~z 跟 0~9
                 if(sValue.length() != 0){ //要先確定是否有字串
                     loginEdtAccount.getText().delete(s.length()-1, s.length());//去除最後一個字(就是使用者輸入的那個不合法字)
                 }
@@ -169,10 +169,16 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            String sValue=s.toString();//那個 sValue 是 EditText 的內容
-            if(!sValue.matches("[a-zA-Z1-9]+")){ //輸入限定只能是 A~Z 或 a~z 跟 1~9
+            /**
+             * inputType=password 的 editText 不能直接從那個 CharSequence 得值，而且也不能用 delete 來更動
+             * 內容，所以這邊的做法跟 Account 的部份不同。
+             */
+            String sValue=loginEdtPassword.getText().toString();
+            if(!sValue.matches("[a-zA-Z0-9]+")){ //輸入限定只能是 A~Z 或 a~z 跟 0~9
                 if(sValue.length() != 0){ //要先確定是否有字串
-                    loginEdtPassword.getText().delete(s.length()-1, s.length());//去除最後一個字(就是使用者輸入的那個不合法字)
+                    //loginEdtPassword.getText().delete(s.length()-1, s.length()); 這個無法作用
+                    loginEdtPassword.setText(sValue.substring(0, sValue.length()-1));
+                    loginEdtPassword.setSelection(sValue.length()-1); //把游標放到最後:https://stackoverflow.com/questions/8035107/how-to-set-cursor-position-in-edittext
                 }
             }
             checkLoginBtnLoginEnable();

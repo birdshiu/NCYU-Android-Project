@@ -2,8 +2,10 @@ package com.example.whoscall;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -29,10 +31,10 @@ import java.nio.charset.Charset;
  * 只是他做的是註冊帳號。
  */
 public class RegisterActivity extends AppCompatActivity {
-    private final String REGISTER_RESULT_OK="0";
-    private final String REGISTER_RESULT_DUPLICATED="1";
-    private final String REGISTER_RESULT_SERVER_ERROR="2";
-    private final String REGISTER_RESULT_NO_INTERNET="3";
+    private final int REGISTER_RESULT_OK=0;
+    private final int REGISTER_RESULT_DUPLICATED=1;
+    private final int REGISTER_RESULT_SERVER_ERROR=2;
+    private final int REGISTER_RESULT_NO_INTERNET=3;
 
     private Handler registerHandler;
     private Button registerBtnRegister;
@@ -73,6 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
             userAccount=registerEdtAccount.getText().toString();
             userPassword=registerEdtPassword.getText().toString();
             registerProgressDialog.show(); //顥示那個轉轉轉的
+            registerBtnRegister.setEnabled(false); //防止使用者一按再按
             /**
              * 點擊後就弄個 Thread 來跑網路的傳輸工作
              * HttpUrlConnection的範例:
@@ -109,6 +112,7 @@ public class RegisterActivity extends AppCompatActivity {
                         connection.setInstanceFollowRedirects(false); //不確定是啥，好像可有可無
                         connection.setDoOutput(true); //使用 URL 連結做輸出
                         connection.setDoInput(true); //使用 URL 連結做輸入
+                        connection.setConnectTimeout(3000); //逾時
                         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); //Post 的資料格式
                         connection.setRequestProperty("charset", "UTF-8");
                         connection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
@@ -128,9 +132,6 @@ public class RegisterActivity extends AppCompatActivity {
                         BufferedReader bf=new BufferedReader(new InputStreamReader(connection.getInputStream()));
                         DataInputStream dataIStream=new DataInputStream(connection.getInputStream());
                         resultCode=bf.readLine(); //讀取結果
-                        Log.d("message", resultCode);
-
-                        registerHandler.post(afterRegisterBtnClick);
 
                         /*StringBuffer inputLine=new StringBuffer();
                         String tmpString;
@@ -141,8 +142,12 @@ public class RegisterActivity extends AppCompatActivity {
 
 
                     }catch(Exception e){
-                        Log.d("message", e.toString());
+                        //有抓到錯誤的話，可能就是 server 端出錯
+                        resultCode=String.valueOf(REGISTER_RESULT_SERVER_ERROR);
                     }
+
+                    registerHandler.post(afterRegisterBtnClick);
+
                 }
             }).start();
         }
@@ -161,7 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
              * 跟loginActivity差不多
              */
             String sValue=s.toString();//那個 sValue 是 EditText 的內容
-            if(!sValue.matches("[a-zA-Z1-9]+")){ //輸入限定只能是 A~Z 或 a~z 跟 1~9
+            if(!sValue.matches("[a-zA-Z0-9]+")){ //輸入限定只能是 A~Z 或 a~z 跟 1~9
                 if(sValue.length() != 0){ //要先確定是否有字串
                     registerEdtAccount.getText().delete(s.length()-1, s.length());//去除最後一個字(就是使用者輸入的那個不合法字)
                 }
@@ -184,10 +189,16 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            String sValue=s.toString();//那個 sValue 是 EditText 的內容
-            if(!sValue.matches("[a-zA-Z1-9]+")){ //輸入限定只能是 A~Z 或 a~z 跟 1~9
+            /**
+             * inputType=password 的 editText 不能直接從那個 CharSequence 得值，而且也不能用 delete 來更動
+             * 內容，所以這邊的做法跟 Account 的部份不同。
+             */
+            String sValue=registerEdtPassword.getText().toString();
+            if(!sValue.matches("[a-zA-Z0-9]+")){ //輸入限定只能是 A~Z 或 a~z 跟 0~9
                 if(sValue.length() != 0){ //要先確定是否有字串
-                    registerEdtPassword.getText().delete(s.length()-1, s.length());//去除最後一個字(就是使用者輸入的那個不合法字)
+                    //loginEdtPassword.getText().delete(s.length()-1, s.length()); 這個無法作用
+                    registerEdtPassword.setText(sValue.substring(0, sValue.length()-1));
+                    registerEdtPassword.setSelection(sValue.length()-1); //把游標放到最後:https://stackoverflow.com/questions/8035107/how-to-set-cursor-position-in-edittext
                 }
             }
             checkRegisterBtnRegisterEnable();
@@ -214,6 +225,82 @@ public class RegisterActivity extends AppCompatActivity {
         //有接收到 php 端回應後要做的事
         public void run(){
             registerProgressDialog.dismiss(); //停止 progressdialog
+
+            int iResultCode=Integer.parseInt(resultCode);
+
+            switch(iResultCode){ //檢查狀態碼
+                case REGISTER_RESULT_OK:
+                    showRegisterOkAlertDialog();
+                    break;
+                case REGISTER_RESULT_DUPLICATED:
+                    showDuplicatedAccountErrorAlertDialog();
+                    break;
+                case REGISTER_RESULT_SERVER_ERROR:
+                    showServerErrorAlertDialog();
+                    break;
+            }
         }
     };
+
+    private void showServerErrorAlertDialog(){
+        AlertDialog.Builder altDlgBuilder=new AlertDialog.Builder(RegisterActivity.this);
+        altDlgBuilder.setTitle("錯誤");
+        altDlgBuilder.setMessage("Server 端出錯 !\n看要不要等等再試。");
+        altDlgBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+        altDlgBuilder.setCancelable(false);
+
+        AlertDialog dialog; //close dialog:https://stackoverflow.com/questions/4336470/how-do-i-close-an-android-alertdialog/13871146
+
+        altDlgBuilder.setPositiveButton("好哦", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                registerBtnRegister.setEnabled(true); //可以按了
+                dialog.dismiss();
+            }
+        });
+
+        dialog=altDlgBuilder.create();
+        dialog.show();
+    }
+
+    private void showRegisterOkAlertDialog(){
+        AlertDialog.Builder altDlgBuilder=new AlertDialog.Builder(RegisterActivity.this);
+        altDlgBuilder.setTitle("註冊成功");
+        altDlgBuilder.setMessage("你的帳號成功註冊\n現在能回到登入頁面做登入。");
+        altDlgBuilder.setIcon(android.R.drawable.ic_dialog_info);
+        altDlgBuilder.setCancelable(false);
+
+        AlertDialog dialog; //close dialog:https://stackoverflow.com/questions/4336470/how-do-i-close-an-android-alertdialog/13871146
+
+        altDlgBuilder.setPositiveButton("讚哦", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                RegisterActivity.this.finish();
+            }
+        });
+
+        dialog=altDlgBuilder.create();
+        dialog.show();
+    }
+
+    private void showDuplicatedAccountErrorAlertDialog(){
+        AlertDialog.Builder altDlgBuilder=new AlertDialog.Builder(RegisterActivity.this);
+        altDlgBuilder.setTitle("帳號重複");
+        altDlgBuilder.setMessage("這個帳號名稱有人使用了哦!\n看看要不要換個。");
+        altDlgBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+        altDlgBuilder.setCancelable(false);
+
+        AlertDialog dialog; //close dialog:https://stackoverflow.com/questions/4336470/how-do-i-close-an-android-alertdialog/13871146
+
+        altDlgBuilder.setPositiveButton("好哦", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                registerBtnRegister.setEnabled(true); //可以按了
+                dialog.dismiss();
+            }
+        });
+
+        dialog=altDlgBuilder.create();
+        dialog.show();
+    }
 }
