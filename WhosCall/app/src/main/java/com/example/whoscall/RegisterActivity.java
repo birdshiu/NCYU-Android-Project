@@ -128,11 +128,6 @@ public class RegisterActivity extends AppCompatActivity {
                          * 之後如果要讀Server端送過來的資料，可用以下方法
                          *  參考資料:https://stackoverflow.com/questions/50506450/how-to-read-whole-data-from-datainputstream-by-a-loop
                          */
-
-                        BufferedReader bf=new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                        DataInputStream dataIStream=new DataInputStream(connection.getInputStream());
-                        resultCode=bf.readLine(); //讀取結果
-
                         /*StringBuffer inputLine=new StringBuffer();
                         String tmpString;
                         while((tmpString=dataIStream.readLine()) != null){
@@ -140,14 +135,16 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.d("message", inputLine.toString());
                         }*/
 
+                        BufferedReader bf=new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        DataInputStream dataIStream=new DataInputStream(connection.getInputStream());
+                        resultCode=bf.readLine(); //讀取結果，Server只會傳一個字
 
                     }catch(Exception e){
-                        //有抓到錯誤的話，可能就是 server 端出錯
+                        //有抓到錯誤的話，可能就是 server 端出錯(或本地網路有問題)
                         resultCode=String.valueOf(REGISTER_RESULT_SERVER_ERROR);
                     }
 
-                    registerHandler.post(afterRegisterBtnClick);
-
+                    registerHandler.post(afterRegisterBtnRegisterClick);
                 }
             }).start();
         }
@@ -221,7 +218,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private Runnable afterRegisterBtnClick=new Runnable(){
+    private Runnable afterRegisterBtnRegisterClick=new Runnable(){
         //有接收到 php 端回應後要做的事
         public void run(){
             registerProgressDialog.dismiss(); //停止 progressdialog

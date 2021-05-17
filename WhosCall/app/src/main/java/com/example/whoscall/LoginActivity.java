@@ -2,6 +2,9 @@ package com.example.whoscall;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.DataInput;
@@ -29,10 +34,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
-    private final String LOGIN_RESULT_OK="0";
+    private final int LOGIN_RESULT_OK=0;
+    private final int LOGIN_RESULT_NO_SUCH_ACCOUNT=1;
+    private final int LOGIN_RESULT_INCORRECT_PASSWORD=2;
+    private final int LOGIN_RESULT_SERVER_ERROR=3;
 
     private EditText loginEdtAccount, loginEdtPassword;
     private Button loginBtnLogin, loginBtnRegister;
+    private ProgressDialog loginProgressDialog;
 
     private Handler loginHandler;
     private String resultCode;
@@ -47,6 +56,14 @@ public class LoginActivity extends AppCompatActivity {
         loginEdtPassword=findViewById(R.id.loginEdtPassword);
         loginBtnLogin=findViewById(R.id.loginBtnLogin);
         loginBtnRegister=findViewById(R.id.loginBtnRegister);
+
+        /**
+         * ProgressDialog 參考資料:https://a7069810.pixnet.net/blog/post/400094257-%5Bandroid%5D-progressdialog
+         */
+        loginProgressDialog=new ProgressDialog(LoginActivity.this);
+        loginProgressDialog.setMessage("處理中...");
+        loginProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        loginProgressDialog.setCancelable(false); //不能手動停止
 
         loginBtnLogin.setEnabled(false);
         loginBtnLogin.setOnClickListener(loginBtnLoginOnClickListener);
@@ -63,9 +80,7 @@ public class LoginActivity extends AppCompatActivity {
             loginBtnLogin.setEnabled(false); //防止使用者一點再點
             userAccount=loginEdtAccount.getText().toString();
             userPassword=loginEdtPassword.getText().toString();
-
-            Log.d("message", userAccount);
-            Log.d("message", userPassword);
+            loginProgressDialog.show(); //顥示那個轉轉轉的
             //點擊後就弄個 Thread 來跑網路的傳輸工作
             /**
              * HttpUrlConnection的範例:
@@ -80,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                     DataOutputStream dataOStream;
 
                     try{
-                        url=new URL("http://"+getString(R.string.server_ip)+"/test.php"); //請求的目標
+                        url=new URL("http://"+getString(R.string.server_ip)+"/Login.php"); //請求的目標
                         connection=(HttpURLConnection)url.openConnection();
 
                         String parameters="user="+userAccount+"&password="+userPassword; //post的值，用&做連接
@@ -93,6 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                         connection.setInstanceFollowRedirects(false); //不確定是啥，好像可有可無
                         connection.setDoOutput(true); //使用 URL 連結做輸出
                         connection.setDoInput(true); //使用 URL 連結做輸入
+                        connection.setConnectTimeout(3000); //逾時
                         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); //Post 的資料格式
                         connection.setRequestProperty("charset", "UTF-8");
                         connection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
@@ -108,18 +124,22 @@ public class LoginActivity extends AppCompatActivity {
                          * 之後如果要讀Server端送過來的資料，可用以下方法
                          *  參考資料:https://stackoverflow.com/questions/50506450/how-to-read-whole-data-from-datainputstream-by-a-loop
                          */
-                        DataInputStream dataIStream=new DataInputStream(connection.getInputStream());
+                        /*DataInputStream dataIStream=new DataInputStream(connection.getInputStream());
                         StringBuffer inputLine=new StringBuffer();
                         String tmpString;
                         while((tmpString=dataIStream.readLine()) != null){
                             inputLine.append(tmpString);
-                            Log.d("message", inputLine.toString());
-                         }
+                         }*/
 
-
+                        BufferedReader bf=new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        DataInputStream dataIStream=new DataInputStream(connection.getInputStream());
+                        resultCode=bf.readLine(); //讀取結果，Server只會傳一個字
                     }catch(Exception e){
-                        Log.d("message", e.toString());
+                        //有抓到錯誤的話，可能就是 server 端出錯(或本地網路有問題)
+                        resultCode=String.valueOf(LOGIN_RESULT_SERVER_ERROR);
                     }
+
+                    loginHandler.post(afterloginBtnLoginClick);
                 }
             }).start();
         }
@@ -208,5 +228,104 @@ public class LoginActivity extends AppCompatActivity {
         }else{
             loginBtnLogin.setEnabled(false);
         }
+    }
+
+    private Runnable afterloginBtnLoginClick=new Runnable(){
+        @Override
+        public void run(){
+            loginProgressDialog.dismiss(); //停止 progressdialog
+
+            int iResultCode=Integer.parseInt(resultCode);
+
+            switch(iResultCode){ //檢查狀態碼
+                case LOGIN_RESULT_OK:
+                    startLoginProgress();
+                    break;
+                case LOGIN_RESULT_NO_SUCH_ACCOUNT:
+                    showNoSuchAccountAlertDialog();
+                    break;
+                case LOGIN_RESULT_INCORRECT_PASSWORD:
+                    showIncorrectPasswordAlertDialog();
+                    break;
+                case LOGIN_RESULT_SERVER_ERROR:
+                    showServerErrorAlertDialog();
+                    break;
+            }
+        }
+    };
+
+    private void startLoginProgress(){
+        //記錄登入資訊
+        SharedPreferences sharedP=getSharedPreferences(getString(R.string.whos_calls_shared_preference), MODE_PRIVATE);
+        sharedP.edit().putString(getString(R.string.user_account), userAccount)
+                .putString(getString(R.string.user_password), userPassword).commit();
+
+        Toast.makeText(LoginActivity.this, "登入成功 !!", Toast.LENGTH_LONG);
+
+        Intent tmpIntent=new Intent(LoginActivity.this, MenuActivity.class);
+        startActivity(tmpIntent);
+    }
+
+    private void showNoSuchAccountAlertDialog(){
+        AlertDialog.Builder altDlgBuilder=new AlertDialog.Builder(LoginActivity.this);
+        altDlgBuilder.setTitle("錯誤");
+        altDlgBuilder.setMessage("查無此帳號 !!");
+        altDlgBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+        altDlgBuilder.setCancelable(false);
+
+        AlertDialog dialog; //close dialog:https://stackoverflow.com/questions/4336470/how-do-i-close-an-android-alertdialog/13871146
+
+        altDlgBuilder.setPositiveButton("好哦", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                loginBtnLogin.setEnabled(true); //可以按了
+                dialog.dismiss();
+            }
+        });
+
+        dialog=altDlgBuilder.create();
+        dialog.show();
+    }
+
+    private void showServerErrorAlertDialog(){
+        AlertDialog.Builder altDlgBuilder=new AlertDialog.Builder(LoginActivity.this);
+        altDlgBuilder.setTitle("錯誤");
+        altDlgBuilder.setMessage("Server 端出錯 !\n看要不要等等再試。");
+        altDlgBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+        altDlgBuilder.setCancelable(false);
+
+        AlertDialog dialog; //close dialog:https://stackoverflow.com/questions/4336470/how-do-i-close-an-android-alertdialog/13871146
+
+        altDlgBuilder.setPositiveButton("好哦", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                loginBtnLogin.setEnabled(true); //可以按了
+                dialog.dismiss();
+            }
+        });
+
+        dialog=altDlgBuilder.create();
+        dialog.show();
+    }
+
+    private void showIncorrectPasswordAlertDialog(){
+        AlertDialog.Builder altDlgBuilder=new AlertDialog.Builder(LoginActivity.this);
+        altDlgBuilder.setTitle("錯誤");
+        altDlgBuilder.setMessage("你的密碼不正確 !!");
+        altDlgBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+        altDlgBuilder.setCancelable(false);
+
+        AlertDialog dialog; //close dialog:https://stackoverflow.com/questions/4336470/how-do-i-close-an-android-alertdialog/13871146
+
+        altDlgBuilder.setPositiveButton("好哦", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                loginBtnLogin.setEnabled(true); //可以按了
+                dialog.dismiss();
+            }
+        });
+
+        dialog=altDlgBuilder.create();
+        dialog.show();
     }
 }

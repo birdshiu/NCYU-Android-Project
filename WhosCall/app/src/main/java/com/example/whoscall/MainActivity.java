@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         mainImage=findViewById(R.id.mainImage);
 
         mainBtnGivePermission.setOnClickListener(mainBtnGivePermissionOnClickListener);
-        
+
     }
 
     private void checkAllPermission(){
