@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.CallLog;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         mainImage=findViewById(R.id.mainImage);
 
         mainBtnGivePermission.setOnClickListener(mainBtnGivePermissionOnClickListener);
-
+        
     }
 
     private void checkAllPermission(){
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             mainTxtMessage.setText(READY_START_MESSAGE);
             mainTxtMessage.setTextSize(32);
             mainImage.setImageResource(R.drawable.ready_start);
-            mainHandler.postDelayed(enterLoginActivityRunnable, 1500); //1.5秒後啟動 loginActivity
+            mainHandler.postDelayed(enterLoginOrMenuActivityRunnable, 1500); //1.5秒後準備進入
         }else{
             /**
              * 把 View 給藏起來。
@@ -89,9 +90,16 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private Runnable enterLoginActivityRunnable=new Runnable(){
+    private Runnable enterLoginOrMenuActivityRunnable=new Runnable(){
         public void run(){
-            Intent tmpIntent=new Intent(MainActivity.this, LoginActivity.class);
+            SharedPreferences sharedP=getSharedPreferences(getString(R.string.whos_calls_shared_preference), MODE_PRIVATE);
+            Intent tmpIntent;
+
+            if(sharedP.getString(getString(R.string.user_account), "nope").equals("nope")){ //假如拿不到 user_account 值
+                tmpIntent=new Intent(MainActivity.this, LoginActivity.class); //進入登入頁面
+            }else{
+                tmpIntent=new Intent(MainActivity.this, MenuActivity.class); //進入選單頁面
+            }
             startActivity(tmpIntent);
         }
     };
@@ -103,11 +111,6 @@ public class MainActivity extends AppCompatActivity {
          */
         super.onResume();
         checkAllPermission();
-    }
-
-    @Override
-    protected  void onStart(){
-        super.onStart();
     }
 
 }

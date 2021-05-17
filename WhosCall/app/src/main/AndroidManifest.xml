@@ -15,8 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WhosCall">
-        <activity android:name=".RegisterActivity"></activity>
-        <!-- 為了讓 app 可以用 http 傳傳:https://blog.csdn.net/cpcpcp123/article/details/108063189 -->
+        <activity android:name=".MenuActivity"></activity>
+        <activity android:name=".RegisterActivity" /> <!-- 為了讓 app 可以用 http 傳傳:https://blog.csdn.net/cpcpcp123/article/details/108063189 -->
         <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
