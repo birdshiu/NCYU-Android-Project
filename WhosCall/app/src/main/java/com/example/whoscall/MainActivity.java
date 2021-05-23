@@ -94,17 +94,17 @@ public class MainActivity extends AppCompatActivity {
         public void run(){
             SharedPreferences sharedP=getSharedPreferences(getString(R.string.whos_calls_shared_preference), MODE_PRIVATE);
             Intent tmpIntent;
-
+/*
             //test
             tmpIntent=new Intent(MainActivity.this, MenuActivity.class); //進入選單頁面
             startActivity(tmpIntent);
-
-            /*if(sharedP.getString(getString(R.string.user_account), "nope").equals("nope")){ //假如拿不到 user_account 值
+*/
+            if(sharedP.getString(getString(R.string.user_account), "nope").equals("nope")){ //假如拿不到 user_account 值
                 tmpIntent=new Intent(MainActivity.this, LoginActivity.class); //進入登入頁面
             }else{
                 tmpIntent=new Intent(MainActivity.this, MenuActivity.class); //進入選單頁面
             }
-            startActivity(tmpIntent);*/
+            startActivity(tmpIntent);
         }
     };
 

@@ -7,11 +7,27 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 
 import com.google.android.material.tabs.TabLayout;
 
 public class MenuActivity extends AppCompatActivity {
+    public SyncDataBaseService mSyncDataBaseService=null;
+    private ServiceConnection mServiceConn=new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mSyncDataBaseService=((SyncDataBaseService.LocalBinder)service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +45,9 @@ public class MenuActivity extends AppCompatActivity {
 
         TabLayout tabLayout=findViewById(R.id.menuTabLayout);
         tabLayout.setupWithViewPager(viewPager);
+
+        Intent it=new Intent(MenuActivity.this, SyncDataBaseService.class);
+        bindService(it, mServiceConn, BIND_AUTO_CREATE);
     }
 
     public class InnerPagerAdapter extends FragmentPagerAdapter{
@@ -74,5 +93,13 @@ public class MenuActivity extends AppCompatActivity {
                     return null;
             }
         }
+    }
+
+    public void onBackPressed() {
+        /**
+         * 沒幹什麼，只是讓使用者無法按back鍵回到前頁
+         *參考的資料
+         * https://stackoverflow.com/questions/4779954/disable-back-button-in-android
+         */
     }
 }

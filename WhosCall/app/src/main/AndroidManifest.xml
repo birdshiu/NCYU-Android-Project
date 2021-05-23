@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" /> <!-- 通話記錄 -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- 為了讓 app 可以用 http 傳傳:https://blog.csdn.net/cpcpcp123/article/details/108063189 -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,9 +15,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WhosCall">
-        <activity android:name=".MenuActivity"></activity>
+        <service
+            android:name=".SyncDataBaseService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity android:name=".MenuActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity"/>
+        <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
