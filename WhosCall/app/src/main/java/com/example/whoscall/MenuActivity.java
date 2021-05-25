@@ -29,6 +29,8 @@ public class MenuActivity extends AppCompatActivity {
         }
     };
 
+    private ViewPager menuViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,11 +42,11 @@ public class MenuActivity extends AppCompatActivity {
 
         InnerPagerAdapter pagerAdapter=new InnerPagerAdapter(getSupportFragmentManager());
 
-        ViewPager viewPager=findViewById((R.id.menuViewPager));
-        viewPager.setAdapter(pagerAdapter);
+        menuViewPager=findViewById((R.id.menuViewPager));
+        menuViewPager.setAdapter(pagerAdapter);
 
         TabLayout tabLayout=findViewById(R.id.menuTabLayout);
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(menuViewPager);
 
         Intent it=new Intent(MenuActivity.this, SyncDataBaseService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
@@ -93,6 +95,10 @@ public class MenuActivity extends AppCompatActivity {
                     return null;
             }
         }
+    }
+
+    public void showSearchPhoneFragment(){
+        menuViewPager.setCurrentItem(3);
     }
 
     public void onBackPressed() {

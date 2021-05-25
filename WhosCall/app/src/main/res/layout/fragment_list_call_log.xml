@@ -7,15 +7,10 @@
     android:layout_height="match_parent"
     tools:context=".ListCallLogFragment">
 
-    <Button
-        android:id="@+id/listCallFragmentBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="208dp"
-        android:text="點點"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="123"
+        android:id="@+id/call"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
