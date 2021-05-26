@@ -98,7 +98,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void showSearchPhoneFragment(){
-        menuViewPager.setCurrentItem(3);
+        menuViewPager.setCurrentItem(2);
     }
 
     public void onBackPressed() {

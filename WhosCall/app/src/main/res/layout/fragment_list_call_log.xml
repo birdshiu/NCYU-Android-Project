@@ -7,10 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".ListCallLogFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="123"
-        android:id="@+id/call"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listCallLogRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
