@@ -6,6 +6,12 @@
     <string name="whos_calls_shared_preference">WHOS_CALLS_USER_CONFIG_DATA</string>
     <string name="user_account">USER_ACCOUNT</string>
     <string name="user_password">USER_PASSWORD</string>
+
+    <!-- 下面這些是給 SQLite 用的-->
+    <string name="sqlite_database">whoscall_database</string>
+    <string name="user_advice">user_advice_phone_number</string>
+    <string name="phone_information">phone_number_information</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

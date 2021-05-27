@@ -54,7 +54,6 @@ public class ListCallLogFragment extends Fragment {
             int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
 
             while(managedCursor.moveToNext()){
-                Log.d("message", "add");
                 listString.add(managedCursor.getString(number));
             }
 
