@@ -1,8 +1,11 @@
 package com.example.whoscall;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,18 +15,20 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
     private List<String> mListString;
+    private LinearLayout preShowedLinearLayout=null;
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        public TextView mTxt;
+        private TextView mTxt;
+
         public ViewHolder(View itemView){
             super(itemView);
             mTxt=(TextView) itemView.findViewById(R.id.txt);
-            itemView.setOnClickListener(this);
+            mTxt.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view){
-
+            Log.d("message", ((TextView)view).getText().toString());
         }
     }
 
