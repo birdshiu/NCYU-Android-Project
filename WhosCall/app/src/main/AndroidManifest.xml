@@ -19,7 +19,11 @@
             android:name=".SyncDataBaseService"
             android:enabled="true"
             android:exported="true"></service>
-
+        <receiver android:name=".PhoneReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
         <activity android:name=".MenuActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
