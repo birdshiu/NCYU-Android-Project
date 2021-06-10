@@ -11,19 +11,25 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
-    private List<String> mListString;
+    private List<String> mNumberString;
+    List<String> mDateString;
+    List<String> mStateString;
     private LinearLayout preShowedLinearLayout=null;
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private TextView mTxt;
+        private TextView callNumber, callResult, callState, callDate;
 
         public ViewHolder(View itemView){
             super(itemView);
-            mTxt=(TextView) itemView.findViewById(R.id.txt);
-            mTxt.setOnClickListener(this);
+
+            callDate=(TextView)itemView.findViewById(R.id.callDate);
+            callState=(TextView)itemView.findViewById(R.id.callState);
+            callNumber=(TextView) itemView.findViewById(R.id.callNumber);
+            callNumber.setOnClickListener(this);
         }
 
         @Override
@@ -32,8 +38,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    public RecyclerViewAdapter(List<String> listString){
-        mListString=listString;
+    public RecyclerViewAdapter(List<String> numberString, List<String> dateString,List<String> stateString){
+        mNumberString=numberString;
+        mDateString=dateString;
+        mStateString=stateString;
     }
 
     @NonNull
@@ -47,11 +55,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
-        holder.mTxt.setText(mListString.get(position));
+        holder.callNumber.setText(mNumberString.get(position));
+        holder.callDate.setText(mDateString.get(position));
+        holder.callState.setText(mStateString.get(position));
     }
 
     @Override
     public int getItemCount(){
-        return mListString.size();
+        return mNumberString.size();
     }
 }

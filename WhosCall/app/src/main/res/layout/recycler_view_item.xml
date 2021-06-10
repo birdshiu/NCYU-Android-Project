@@ -9,27 +9,51 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:layout_marginTop="10dp"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
         <LinearLayout
+            android:layout_weight="1"
             android:id="@+id/recyclerViewMessageLinearLayout"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:backgroundTint="#A6FFFF">
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
             <TextView
+                android:layout_marginTop="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txt"
-                android:textSize="28dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:layout_margin="5dp"/>
+                android:id="@+id/callNumber"
+                android:textSize="24dp"
+                android:layout_marginLeft="15dp"/>
 
             <TextView
+                android:id="@+id/callResult"
+                android:layout_marginLeft="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:text="hello"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/callState"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="yep"/>
+
+            <TextView
+                android:id="@+id/callDate"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="dfdfd"/>
         </LinearLayout>
     </LinearLayout>

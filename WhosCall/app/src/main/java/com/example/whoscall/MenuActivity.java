@@ -75,9 +75,6 @@ public class MenuActivity extends AppCompatActivity {
                 case 1:
                     fragment=new SearchPhoneFragment();
                     break;
-                case 2:
-                    fragment=new ReportPhoneFragment();
-                    break;
             }
 
             return fragment;
@@ -85,7 +82,7 @@ public class MenuActivity extends AppCompatActivity {
 
         @Override
         public int getCount(){
-            return 3;
+            return 2;
         }
 
         @Override
@@ -95,8 +92,6 @@ public class MenuActivity extends AppCompatActivity {
                     return "通話記錄";
                 case 1:
                     return "詢問號碼";
-                case 2:
-                   return "回報號碼";
                 default:
                     return null;
             }
