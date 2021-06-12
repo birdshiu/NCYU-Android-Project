@@ -29,12 +29,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             callDate=(TextView)itemView.findViewById(R.id.callDate);
             callState=(TextView)itemView.findViewById(R.id.callState);
             callNumber=(TextView) itemView.findViewById(R.id.callNumber);
-            callNumber.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view){
-            Log.d("message", ((TextView)view).getText().toString());
+            Log.d("message", callNumber.getText().toString());
         }
     }
 
