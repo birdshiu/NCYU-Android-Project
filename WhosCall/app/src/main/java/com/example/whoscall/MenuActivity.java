@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
@@ -114,7 +115,7 @@ public class MenuActivity extends AppCompatActivity {
                     //datetime格式:https://docs.microsoft.com/zh-tw/sql/t-sql/functions/date-and-time-data-types-and-functions-transact-sql?view=sql-server-ver15
                     JoinDate="1980-01-01 00:00:00"; //反正就一個比較久之前的日期
                 }else{
-                    cursor=sqlite.rawQuery("select * from "+getString(R.string.user_advice)+" order by JoinDate desc", null); //拿最新一筆資料的日期
+                    cursor=sqlite.rawQuery("select * from "+getString(R.string.user_advice)+" order by date(JoinDate) desc", null); //拿最新一筆資料的日期
                     cursor.moveToFirst();
                     JoinDate=cursor.getString(2);
                 }
@@ -124,7 +125,7 @@ public class MenuActivity extends AppCompatActivity {
                     //datetime格式:https://docs.microsoft.com/zh-tw/sql/t-sql/functions/date-and-time-data-types-and-functions-transact-sql?view=sql-server-ver15
                     UpdateDate="1980-01-01 00:00:00";//反正就一個比較久之前的日期
                 }else{
-                    cursor=sqlite.rawQuery("select * from "+getString(R.string.phone_information)+" order by UpdateDate desc", null); //拿最新一筆資料的日期
+                    cursor=sqlite.rawQuery("select * from "+getString(R.string.phone_information)+" order by date(UpdateDate) desc", null); //拿最新一筆資料的日期
                     cursor.moveToFirst();
                     UpdateDate=cursor.getString(2);
                 }
@@ -133,10 +134,12 @@ public class MenuActivity extends AppCompatActivity {
                 HttpURLConnection connection;
 
                 try{
+                    SharedPreferences sharedP=getSharedPreferences(getString(R.string.whos_calls_shared_preference), MODE_PRIVATE);
+                    String user=sharedP.getString(getString(R.string.user_account), "");
                     url=new URL("http://"+getString(R.string.server_ip)+"/SyncLocal.php"); //請求的目標
                     connection=(HttpURLConnection)url.openConnection();
 
-                    String parameters="user=birdshi"+"&joindate="+JoinDate+"&updatedate="+UpdateDate; //post的值，用&做連接
+                    String parameters="user="+user+"&joindate="+JoinDate+"&updatedate="+UpdateDate; //post的值，用&做連接
                     byte[] postData=parameters.getBytes(Charset.forName("UTF-8")); //轉成 byte 序列，utf-8 編碼
                     int postDataLength=postData.length; //post需要知道資料的長度
 
@@ -187,7 +190,7 @@ public class MenuActivity extends AppCompatActivity {
                         values.put("UpdateDate", strValues[2]);
 
                         sqlite=mMySQLite.getWritableDatabase();
-                        sqlite.insert(getString(R.string.user_advice), null, values);
+                        sqlite.insert(getString(R.string.phone_information), null, values);
                     }
                 }catch(Exception e){
                     //有抓到錯誤的話，可能就是 server 端出錯(或本地網路有問題)

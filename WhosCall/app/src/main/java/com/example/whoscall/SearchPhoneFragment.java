@@ -29,7 +29,7 @@ public class SearchPhoneFragment extends Fragment {
                 MySQLiteHelper mMySQLite=new MySQLiteHelper(SearchPhoneFragment.this.getContext().getApplicationContext(), getString(R.string.sqlite_database), null, 1);
                 SQLiteDatabase sqlite=mMySQLite.getWritableDatabase();
 
-                Cursor cursor=sqlite.rawQuery("select * from "+getString(R.string.user_advice), null);
+                Cursor cursor=sqlite.rawQuery("select * from "+getString(R.string.user_advice)+" order by date(JoinDate) desc", null);
                 Log.d("message", "下面是 advice");
                 if(cursor != null){
                     if(cursor.getCount() != 0){
