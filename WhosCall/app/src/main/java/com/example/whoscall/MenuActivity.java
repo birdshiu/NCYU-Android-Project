@@ -79,8 +79,6 @@ public class MenuActivity extends AppCompatActivity {
                         "Number VARCHAR(15) PRIMARY KEY,"+
                         "Description VARCHAR(15),"+
                         "JoinDate DATETIME);");
-
-                Log.d("message", "sql create ok");
             }
             cursor.close();
         }
@@ -92,8 +90,6 @@ public class MenuActivity extends AppCompatActivity {
                         "Number VARCHAR(15) PRIMARY KEY,"+
                         "Result VARCHAR(15),"+
                         "UpdateDate DATETIME);");
-
-                Log.d("message", "phone information create ok");
             }
             cursor.close();
         }
@@ -116,7 +112,7 @@ public class MenuActivity extends AppCompatActivity {
 
                 if(cursor.getCount() == 0){ //本地還沒有資料
                     //datetime格式:https://docs.microsoft.com/zh-tw/sql/t-sql/functions/date-and-time-data-types-and-functions-transact-sql?view=sql-server-ver15
-                    JoinDate="1980-01-01 00:00:00";
+                    JoinDate="1980-01-01 00:00:00"; //反正就一個比較久之前的日期
                 }else{
                     cursor=sqlite.rawQuery("select * from "+getString(R.string.user_advice)+" order by JoinDate desc", null); //拿最新一筆資料的日期
                     cursor.moveToFirst();
@@ -126,41 +122,79 @@ public class MenuActivity extends AppCompatActivity {
                 cursor=sqlite.rawQuery("select * from "+getString(R.string.phone_information), null);
                 if(cursor.getCount() == 0){ //本地還沒有資料
                     //datetime格式:https://docs.microsoft.com/zh-tw/sql/t-sql/functions/date-and-time-data-types-and-functions-transact-sql?view=sql-server-ver15
-                    UpdateDate="1980-01-01 00:00:00";
+                    UpdateDate="1980-01-01 00:00:00";//反正就一個比較久之前的日期
                 }else{
                     cursor=sqlite.rawQuery("select * from "+getString(R.string.phone_information)+" order by UpdateDate desc", null); //拿最新一筆資料的日期
                     cursor.moveToFirst();
                     UpdateDate=cursor.getString(2);
                 }
 
-                sqlite.close();
-
                 URL url;
                 HttpURLConnection connection;
 
-                /*try{
+                try{
                     url=new URL("http://"+getString(R.string.server_ip)+"/SyncLocal.php"); //請求的目標
                     connection=(HttpURLConnection)url.openConnection();
 
+                    String parameters="user=birdshi"+"&joindate="+JoinDate+"&updatedate="+UpdateDate; //post的值，用&做連接
+                    byte[] postData=parameters.getBytes(Charset.forName("UTF-8")); //轉成 byte 序列，utf-8 編碼
+                    int postDataLength=postData.length; //post需要知道資料的長度
+
                     //下面都是一些設定
                     connection=(HttpURLConnection)url.openConnection();
-                    connection.setRequestMethod("GET");
+                    connection.setRequestMethod("POST");
                     connection.setInstanceFollowRedirects(false); //不確定是啥，好像可有可無
                     connection.setDoOutput(true); //使用 URL 連結做輸出
                     connection.setDoInput(true); //使用 URL 連結做輸入
                     connection.setConnectTimeout(3000); //逾時
+                    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); //Post 的資料格式
+                    connection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
                     connection.setRequestProperty("charset", "UTF-8");
                     connection.setUseCaches(false);
 
+                    DataOutputStream dataOStream=new DataOutputStream(connection.getOutputStream());
+                    dataOStream.write(postData);
+                    dataOStream.flush();
+
+                    //然後把下載來的資料存到本地資料庫
                     BufferedReader bf=new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     String string;
-                    while((string=bf.readLine()) != null){
-                        Log.d("message", string);
+                    int rowNumber;
+
+                    rowNumber=Integer.parseInt(bf.readLine()); //先接個數字，這是 user_advice_phone_number 部分
+                    for(int i=0;i<rowNumber;i++){
+                        //傳過來的資料都是用 "/" 分開的:http://tw.gitbook.net/java/java_string_split.html
+                        String[] strValues=bf.readLine().split("/");
+                        //再來就用 sqlite 寫入資料:https://developer.android.com/training/data-storage/sqlite
+                        ContentValues values = new ContentValues();
+                        values.put("Number", strValues[0]);
+                        values.put("Description", strValues[1]);
+                        values.put("JoinDate", strValues[2]);
+
+                        sqlite=mMySQLite.getWritableDatabase();
+                        sqlite.insert(getString(R.string.user_advice), null, values);
+                    }
+
+                    rowNumber=Integer.parseInt(bf.readLine()); //再接一次數字
+                    for(int i=0;i<rowNumber;i++){
+                        //跟上面差不多
+                        string=bf.readLine();
+                        String[] strValues=bf.readLine().split("/");
+                        //再來就用 sqlite 寫入資料:https://developer.android.com/training/data-storage/sqlite
+                        ContentValues values = new ContentValues();
+                        values.put("Number", strValues[0]);
+                        values.put("Result", strValues[1]);
+                        values.put("UpdateDate", strValues[2]);
+
+                        sqlite=mMySQLite.getWritableDatabase();
+                        sqlite.insert(getString(R.string.user_advice), null, values);
                     }
                 }catch(Exception e){
                     //有抓到錯誤的話，可能就是 server 端出錯(或本地網路有問題)
                     syncHasError=true;
-                }*/
+                }
+                cursor.close();
+                sqlite.close();
                 menuHandler.post(afterSyncLocalData);
             }
         }).start();
@@ -173,7 +207,7 @@ public class MenuActivity extends AppCompatActivity {
                 Toast.makeText(MenuActivity.this, "資料同步失敗，請確認連線", Toast.LENGTH_LONG).show();
             }
             menuProgressDialog.dismiss();
-            InnerPagerAdapter pagerAdapter=new InnerPagerAdapter(getSupportFragmentManager());
+            InnerPagerAdapter pagerAdapter=new InnerPagerAdapter(getSupportFragmentManager()); //這時再布置那個 fragment
             menuViewPager.setAdapter(pagerAdapter);
         }
     };

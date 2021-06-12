@@ -26,7 +26,7 @@
 	}
 	
 	if(isset($post_user) && isset($post_password)){ //正常狀況下，使用者應該都會送這兩個資料來
-		$sql_command="SELECT * FROM User WHERE Account='$post_user'";
+		$sql_command="SELECT * FROM user WHERE Account='$post_user'";
 		$result=mysqli_query($android_whoscall, $sql_command); //送出查詢
 		$nums=mysqli_num_rows($result); //算算有幾筆資料
 		
