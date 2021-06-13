@@ -34,7 +34,7 @@
 			echo $REGISTER_RESULT_DUPLICATED;
 		}else{
 			//插入資料:https://www.w3schools.com/php/func_mysqli_prepare.asp
-			$stmt=mysqli_prepare($android_whoscall, "INSERT INTO User (Account, Password) VALUES(?, ?)");
+			$stmt=mysqli_prepare($android_whoscall, "INSERT INTO user (Account, Password) VALUES(?, ?)");
 			//mysqli_stmt_bind_param : https://www.php.net/manual/en/mysqli-stmt.bind-param.php
 			mysqli_stmt_bind_param($stmt, "ss", $post_user, $post_password);
 			$stmt_result=mysqli_stmt_execute($stmt);

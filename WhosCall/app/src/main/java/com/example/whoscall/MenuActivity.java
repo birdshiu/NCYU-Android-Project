@@ -161,7 +161,6 @@ public class MenuActivity extends AppCompatActivity {
 
                     //然後把下載來的資料存到本地資料庫
                     BufferedReader bf=new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    String string;
                     int rowNumber;
 
                     rowNumber=Integer.parseInt(bf.readLine()); //先接個數字，這是 user_advice_phone_number 部分
