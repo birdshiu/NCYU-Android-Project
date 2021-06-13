@@ -179,20 +179,20 @@ public class MenuActivity extends AppCompatActivity {
                     }
 
                     rowNumber=Integer.parseInt(bf.readLine()); //再接一次數字
-                    for(int i=0;i<rowNumber;i++){
+                    for(int i=0;i<rowNumber;i++) {
                         //跟上面差不多
-                        string=bf.readLine();
-                        String[] strValues=bf.readLine().split("/");
+                        String[] strValues = bf.readLine().split("/");
                         //再來就用 sqlite 寫入資料:https://developer.android.com/training/data-storage/sqlite
                         ContentValues values = new ContentValues();
                         values.put("Number", strValues[0]);
                         values.put("Result", strValues[1]);
                         values.put("UpdateDate", strValues[2]);
 
-                        sqlite=mMySQLite.getWritableDatabase();
+                        sqlite = mMySQLite.getWritableDatabase();
                         sqlite.insert(getString(R.string.phone_information), null, values);
                     }
                 }catch(Exception e){
+                    Log.d("message",e.toString());
                     //有抓到錯誤的話，可能就是 server 端出錯(或本地網路有問題)
                     syncHasError=true;
                 }

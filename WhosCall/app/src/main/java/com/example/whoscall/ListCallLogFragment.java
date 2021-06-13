@@ -1,6 +1,7 @@
 package com.example.whoscall;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -32,10 +33,8 @@ public class ListCallLogFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_list_call_log, container, false);
-
         listCallLogRecyclerView=v.findViewById(R.id.listCallLogRecyclerView);
         listCallHandler=new Handler();
-
 
         return v;
     }
@@ -61,11 +60,31 @@ public class ListCallLogFragment extends Fragment {
             int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
 
             while(managedCursor.moveToNext()){
+                MySQLiteHelper mMySQLite=new MySQLiteHelper(ListCallLogFragment.this.getContext().getApplicationContext(), getString(R.string.sqlite_database), null, 1);
+                SQLiteDatabase sqlite=mMySQLite.getWritableDatabase();
+
                 if(managedCursor.getString(number).equals("")){
                     numberString.add("不明的號碼");
+                    resultString.add("");
                 }else{
                     numberString.add(managedCursor.getString(number));
+                    Cursor cursor=sqlite.rawQuery("select Description from "+getString(R.string.user_advice)+" where Number='"+managedCursor.getString(number)+"'", null);
+
+                    if(cursor.getCount() != 0){
+                        cursor.moveToFirst();
+                        resultString.add(cursor.getString(0));
+                    }else{
+                        cursor=sqlite.rawQuery("select Result from "+getString(R.string.phone_information)+" where Number='"+managedCursor.getString(number)+"'", null);
+
+                        if(cursor.getCount() != 0){
+                            cursor.moveToFirst();
+                            resultString.add(cursor.getString(0));
+                        }
+                        else resultString.add("");
+                    }
+                    cursor.close();
                 }
+                sqlite.close();
 
                 Date dateTime=new Date(Long.parseLong(managedCursor.getString(date))); //轉成 date 格式
                 //https://stackoverflow.com/questions/7182996/java-get-month-integer-from-date
@@ -85,59 +104,19 @@ public class ListCallLogFragment extends Fragment {
                     case CallLog.Calls.MISSED_TYPE:
                         stateString.add("未接");
                         break;
+                    case CallLog.Calls.REJECTED_TYPE:
+                        stateString.add("拒接");
+                        break;
                     default:
-                        stateString.add("nope");
+                        stateString.add("???");
                         break;
                 }
             }
-
             managedCursor.close();
 
             listCallLogRecyclerView.setLayoutManager(new LinearLayoutManager(ListCallLogFragment.this.getContext()));
-
-            RecyclerViewAdapter adapter=new RecyclerViewAdapter(numberString, dateString, stateString);
+            RecyclerViewAdapter adapter=new RecyclerViewAdapter(numberString, dateString, stateString, resultString);
             listCallLogRecyclerView.setAdapter(adapter);
         }
     };
-
-    private String getCallDetails() {
-        StringBuffer sb = new StringBuffer();
-        Cursor managedCursor = this.getContext().getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, CallLog.Calls.DATE + " DESC");
-        int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
-        int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
-        int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
-        int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
-        sb.append("Call Details :");
-        while (managedCursor.moveToNext()) {
-            String phNumber = managedCursor.getString(number);
-            String callType = managedCursor.getString(type);
-            String callDate = managedCursor.getString(date);
-            Date callDayTime = new Date(Long.valueOf(callDate));
-            String callDuration = managedCursor.getString(duration);
-            String dir = null;
-
-            Log.d("message", phNumber);
-            int dircode = Integer.parseInt(callType);
-            switch (dircode) {
-                case CallLog.Calls.OUTGOING_TYPE:
-                    dir = "OUTGOING";
-                    break;
-
-                case CallLog.Calls.INCOMING_TYPE:
-                    dir = "INCOMING";
-                    break;
-
-                case CallLog.Calls.MISSED_TYPE:
-                    dir = "MISSED";
-                    break;
-            }
-            sb.append("\nPhone Number:--- " + phNumber + " \nCall Type:--- "
-                    + dir + " \nCall Date:--- " + callDayTime
-                    + " \nCall duration in sec :--- " + callDuration);
-            sb.append("\n----------------------------------");
-        }
-        managedCursor.close();
-        return sb.toString();
-
-    }
 }
