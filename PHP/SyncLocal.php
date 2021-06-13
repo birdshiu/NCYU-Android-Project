@@ -35,4 +35,6 @@
 			echo $row["Number"]."/".$row["Result"]."/".$row["UpdateDate"]."\n";
 		}
 	}
+	
+	$android_whoscall=NULL;
 ?>

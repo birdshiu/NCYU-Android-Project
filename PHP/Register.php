@@ -26,7 +26,7 @@
 	}
 	
 	if(isset($post_user) && isset($post_password)){ //正常狀況下，使用者應該都會送這兩個資料來
-		$sql_command="SELECT * FROM user WHERE Account='$post_user'";
+		$sql_command="SELECT * FROM User WHERE Account='$post_user'";
 		$result=mysqli_query($android_whoscall, $sql_command); //送出查詢
 		$nums=mysqli_num_rows($result); //算算有幾筆資料
 		
@@ -34,7 +34,7 @@
 			echo $REGISTER_RESULT_DUPLICATED;
 		}else{
 			//插入資料:https://www.w3schools.com/php/func_mysqli_prepare.asp
-			$stmt=mysqli_prepare($android_whoscall, "INSERT INTO user (Account, Password) VALUES(?, ?)");
+			$stmt=mysqli_prepare($android_whoscall, "INSERT INTO User (Account, Password) VALUES(?, ?)");
 			//mysqli_stmt_bind_param : https://www.php.net/manual/en/mysqli-stmt.bind-param.php
 			mysqli_stmt_bind_param($stmt, "ss", $post_user, $post_password);
 			$stmt_result=mysqli_stmt_execute($stmt);
