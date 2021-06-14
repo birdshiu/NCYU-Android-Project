@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.BufferedReader;
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
+    private ListCallLogFragment mFragment;
     private List<String> mNumberString;
     private List<String> mDateString;
     private List<String> mStateString;
@@ -191,10 +193,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     altDlgBuilder.setMessage("更新成功 !!");
                     altDlgBuilder.setIcon(android.R.drawable.ic_dialog_info);
                 }
-
                 altDlgBuilder.show();
+                mFragment.onResume();
             }
         };
+    }
+
+    public void addFragment(Fragment fragment){
+        mFragment=(ListCallLogFragment)fragment;
     }
 
     public RecyclerViewAdapter(List<String> numberString, List<String> dateString,List<String> stateString, List<String> resultString){

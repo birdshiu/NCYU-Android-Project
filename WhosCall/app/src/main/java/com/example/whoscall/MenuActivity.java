@@ -7,6 +7,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -18,9 +21,11 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.ContactsContract;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -38,6 +43,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 
 public class MenuActivity extends AppCompatActivity {
+    private PhoneReceiver phoneReceiver;
     private Handler menuHandler;
     private ProgressDialog menuProgressDialog;
     private boolean syncHasError;
@@ -96,6 +102,10 @@ public class MenuActivity extends AppCompatActivity {
         }
         sqlite.close();
         syncLocalData();
+
+        IntentFilter intentFilter=new IntentFilter("android.intent.action.PHONE_STATE");
+        phoneReceiver=new PhoneReceiver(MenuActivity.this);
+        registerReceiver(phoneReceiver, intentFilter);
     }
 
 
@@ -200,6 +210,51 @@ public class MenuActivity extends AppCompatActivity {
                 menuHandler.post(afterSyncLocalData);
             }
         }).start();
+    }
+
+    public void checkOnGoingNumber(String phoneNumber){
+        try{
+            String result="";
+            MySQLiteHelper mMySQLite=new MySQLiteHelper(getApplicationContext(), getString(R.string.sqlite_database), null, 1);
+            SQLiteDatabase sqlite=mMySQLite.getWritableDatabase();
+
+            Cursor cursor=sqlite.rawQuery("select Description from "+getString(R.string.user_advice)+" where Number='"+phoneNumber+"'", null);
+
+            if(cursor.getCount() != 0){
+                cursor.moveToFirst();
+                result=cursor.getString(0);
+            }else{
+                cursor=sqlite.rawQuery("select Result from "+getString(R.string.phone_information)+" where Number='"+phoneNumber+"'", null);
+                if(cursor.getCount() != 0){
+                    cursor.moveToFirst();
+                    result=cursor.getString(0);
+                }
+            }
+            //android 的通知:https://foolcodefun.github.io/blog/android/2018/01/11/Android-Notification.html
+            NotificationManager manager=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            Notification.Builder builder=new Notification.Builder(getApplicationContext());
+
+            builder.setContentTitle("來電辨識");
+            builder.setSmallIcon(R.drawable.thimking);
+
+            if(result.equals("")){
+                builder.setContentText("不明的電話號碼");
+            }else{
+                builder.setContentText(result);
+            }
+            NotificationChannel channel;
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                channel=new NotificationChannel("0", "who's call", NotificationManager.IMPORTANCE_HIGH);
+                builder.setChannelId("0");
+                manager.createNotificationChannel(channel);
+            }else{
+                builder.setDefaults(Notification.DEFAULT_ALL)
+                        .setVisibility(Notification.VISIBILITY_PUBLIC);
+            }
+            manager.notify(0, builder.build());
+        }catch(Exception e){
+            Log.d("message", e.toString());
+        }
     }
 
     private Runnable afterSyncLocalData=new Runnable(){

@@ -25,6 +25,7 @@ import java.util.List;
 public class ListCallLogFragment extends Fragment {
     private RecyclerView listCallLogRecyclerView;
     private Handler listCallHandler;
+    private RecyclerViewAdapter recyclerViewAdapter;
 
     public ListCallLogFragment() {
     }
@@ -115,8 +116,9 @@ public class ListCallLogFragment extends Fragment {
             managedCursor.close();
 
             listCallLogRecyclerView.setLayoutManager(new LinearLayoutManager(ListCallLogFragment.this.getContext()));
-            RecyclerViewAdapter adapter=new RecyclerViewAdapter(numberString, dateString, stateString, resultString);
-            listCallLogRecyclerView.setAdapter(adapter);
+            recyclerViewAdapter=new RecyclerViewAdapter(numberString, dateString, stateString, resultString);
+            recyclerViewAdapter.addFragment(ListCallLogFragment.this);
+            listCallLogRecyclerView.setAdapter(recyclerViewAdapter);
         }
     };
 }
