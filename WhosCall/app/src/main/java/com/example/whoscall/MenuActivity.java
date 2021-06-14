@@ -20,6 +20,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -235,7 +236,8 @@ public class MenuActivity extends AppCompatActivity {
             Notification.Builder builder=new Notification.Builder(getApplicationContext());
 
             builder.setContentTitle("來電辨識");
-            builder.setSmallIcon(R.drawable.thimking);
+            builder.setSmallIcon(R.drawable.whoscall_notification_icon);
+            builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.whoscall_notification_icon));
 
             if(result.equals("")){
                 builder.setContentText("不明的電話號碼");

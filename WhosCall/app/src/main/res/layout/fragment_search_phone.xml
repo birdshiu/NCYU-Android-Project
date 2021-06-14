@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/search_phone_fragment_background"
     tools:context=".SearchPhoneFragment">
 
-    <Button
-        android:id="@+id/searchPhoneButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="224dp"
-        android:text="hello"
-        android:textSize="32sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            android:layout_marginTop="40dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/whos_call_icon"/>
+
+        <EditText
+            android:id="@+id/searchPhoneEditText"
+            android:maxLength="15"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:hint="輸入個電話號碼"
+            android:textSize="32dp"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+        <Button
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center"
+            android:id="@+id/searchPhoneButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="狐狸查詢"
+            android:textSize="32sp" />
+    </LinearLayout>
+
+</ScrollView>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WhosCall</string>
+    <string name="app_name">FoxCall</string>
     <string name="server_ip">192.168.43.79</string>
 
     <!--下面這些是給 sharedpreference 用的字串-->
