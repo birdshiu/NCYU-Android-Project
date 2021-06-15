@@ -7,20 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
-
+        android:layout_width="match_parent"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/mainImage"
-            android:layout_width="0dp"
-            android:layout_height="277dp"
+            android:layout_height="300dp"
+            android:layout_width="300dp"
+            android:layout_gravity="center"
             android:scaleType="fitXY"
             android:src="@drawable/give_me_permission"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -31,9 +29,7 @@
             android:gravity="center"
             android:text=""
             android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mainImage" />
+            android:layout_gravity="center"/>
 
         <Button
             android:id="@+id/mainBtnGivePermission"
@@ -42,9 +38,6 @@
             android:layout_marginTop="20dp"
             android:text="趕緊取得權限"
             android:textSize="32sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mainTxtMessage" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_gravity="center"/>
+    </LinearLayout>
 </ScrollView>

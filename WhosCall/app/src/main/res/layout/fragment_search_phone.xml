@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/search_phone_fragment_background"
     tools:context=".SearchPhoneFragment">
 
     <LinearLayout
@@ -28,7 +27,7 @@
             android:layout_marginTop="30dp"
             android:hint="輸入個電話號碼"
             android:textSize="32dp"
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:inputType="number"/>
         <Button
