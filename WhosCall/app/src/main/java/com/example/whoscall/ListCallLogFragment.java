@@ -91,9 +91,18 @@ public class ListCallLogFragment extends Fragment {
                 //https://stackoverflow.com/questions/7182996/java-get-month-integer-from-date
                 Calendar cal=Calendar.getInstance();
                 cal.setTime(dateTime);
+                String dateResult;
                 int month=cal.get(Calendar.MONTH);
                 int day=cal.get(Calendar.DAY_OF_MONTH);
-                dateString.add(String.valueOf(month+1)+"月"+String.valueOf(day)+"日");
+                int hour=cal.get(Calendar.HOUR_OF_DAY);
+                int minute=cal.get(Calendar.MINUTE);
+
+                dateResult=String.valueOf(month+1)+"月"+String.valueOf(day)+"日 ";
+                if(hour < 10) dateResult+="0";
+                dateResult+=String.valueOf(hour)+":";
+                if(minute < 10) dateResult+="0";
+                dateResult+=String.valueOf(minute);
+                dateString.add(dateResult);
 
                 switch(Integer.parseInt(managedCursor.getString(type))){
                     case CallLog.Calls.OUTGOING_TYPE:

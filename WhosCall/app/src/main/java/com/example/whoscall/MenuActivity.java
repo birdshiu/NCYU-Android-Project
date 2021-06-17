@@ -257,6 +257,14 @@ public class MenuActivity extends AppCompatActivity {
         }catch(Exception e){
             Log.d("message", e.toString());
         }
+        //需要刷新頁面:https://stackoverflow.com/questions/18609261/getting-the-current-fragment-instance-in-the-viewpager
+        try{
+            ListCallLogFragment tmpFragment=(ListCallLogFragment)getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.menuViewPager + ":0");
+            if(tmpFragment != null) tmpFragment.onResume();
+        }catch(Exception e){
+
+        }
+
     }
 
     private Runnable afterSyncLocalData=new Runnable(){
