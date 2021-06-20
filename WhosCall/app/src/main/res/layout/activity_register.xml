@@ -51,6 +51,7 @@
 
                 <EditText
                     android:id="@+id/registerEdtAccount"
+                    android:textColor="#FFFFFF"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:inputType="text"
@@ -75,6 +76,7 @@
 
                 <EditText
                     android:id="@+id/registerEdtPassword"
+                    android:textColor="#FFFFFF"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:textSize="24sp"

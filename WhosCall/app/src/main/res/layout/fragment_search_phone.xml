@@ -23,6 +23,7 @@
 
         <EditText
             android:id="@+id/searchPhoneEditText"
+            android:textColor="#FFFFFF"
             android:maxLength="15"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
